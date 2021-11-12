@@ -9,8 +9,25 @@ public class TileGrid : MonoBehaviour
 
     private int rows = 1;
     private int columns = 1;
-    public Transform TileContainer;
+    private readonly Dictionary<(int, int), TileType> previousTileTypes = new Dictionary<(int, int), TileType>();
     private bool isDirty = true;
+
+    public Transform TileContainer
+    {
+        get 
+        {
+            Transform container = this.transform.Find("Container")?.gameObject.transform;
+            if (container == null)
+            {
+                GameObject containerObject = new GameObject();
+                containerObject.transform.parent = this.transform;
+                containerObject.transform.localPosition = new Vector3();
+                container = containerObject.transform;
+            }
+
+            return container;
+        }
+    }
 
     public int Rows
     {
@@ -63,22 +80,34 @@ public class TileGrid : MonoBehaviour
             return;
         }
 
-        if (this.TileContainer == null)
-        {
-            this.TileContainer = this.transform.Find("Container")?.gameObject.transform;
-            if (this.TileContainer == null)
-            {
-                throw new MissingComponentException("Could not locate Tile Container.");
-            }
-        }
         this.GenerateGrid();
 
         this.isDirty = false;
     }
 
     public void GenerateGrid()
-    {
-        this.TileContainer = this.transform.Find("Container")?.gameObject.transform;
+    {   
+        for (int row = 0; row < this.rows; row++)
+        {
+            for (int col = 0; col < this.columns; col++)
+            {
+                Transform child = this.TileContainer.Find($"(row: {row}, col: {col})");
+                if (child == null)
+                {
+                    continue;
+                }
+
+                Tile t = child.gameObject.GetComponent<Tile>();
+                if (t == null)
+                {
+                    continue;
+                }
+
+                previousTileTypes[(row, col)] = t.TileType;
+            }
+        }
+
+
         List<Transform> children = this.TileContainer.Cast<Transform>().ToList();
         foreach(Transform child in children)
         {
@@ -94,8 +123,13 @@ public class TileGrid : MonoBehaviour
                 GameObject newTile = new GameObject();
                 newTile.name = $"(row: {row}, col: {col})";
                 newTile.transform.parent = this.TileContainer;
-                newTile.AddComponent<Tile>().Build();
+                Tile t = newTile.AddComponent<Tile>();
+                if (previousTileTypes.ContainsKey((row, col)))
+                {
+                    t.TileType = previousTileTypes[(row, col)];
+                }
                 newTile.transform.position = new Vector3(row + offsetX, 0, col + offsetZ);
+                t.Build();
                 
 
             }
