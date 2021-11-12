@@ -9,10 +9,31 @@ public class TileGridEditor : Editor
     {
         TileGrid tileGrid = (TileGrid)target;
 
-        tileGrid.rows = EditorGUILayout.IntField("Rows", tileGrid.rows);
-        tileGrid.columns = EditorGUILayout.IntField("Columns", tileGrid.columns);
         
-        Debug.Log($"Rows: {tileGrid.rows}");
-    }
+        EditorGUILayout.LabelField("Dimensions");
+        tileGrid.Rows = EditorGUILayout.IntField("Rows", tileGrid.Rows);
+        tileGrid.Columns = EditorGUILayout.IntField("Columns", tileGrid.Columns);
 
+        GUILayout.Space(20);
+        if (GUILayout.Button("Rebuild Tile Grid"))
+        {
+            tileGrid.GenerateGrid();
+        }
+
+        
+        //EditorGUILayout.HelpBox("The rows and columns must be >0.", MessageType.Info);
+        
+        tileGrid.CleanUp();
+
+        if (tileGrid.TileReference == null)
+        {
+            EditorGUILayout.HelpBox("Missing a Tile Reference!", MessageType.Error);
+        }
+
+        if (tileGrid.TileContainer == null)
+        {
+            EditorGUILayout.HelpBox("Missing a Container Reference!", MessageType.Error);
+        }
+
+    }  
 }
