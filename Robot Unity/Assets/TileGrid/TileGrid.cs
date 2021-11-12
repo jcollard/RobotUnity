@@ -9,14 +9,8 @@ public class TileGrid : MonoBehaviour
 
     private int rows = 1;
     private int columns = 1;
-    public GameObject TileReference;
     public Transform TileContainer;
     private bool isDirty = true;
-
-    public void Start()
-    {
-        this.TileReference.SetActive(false);   
-    }
 
     public int Rows
     {
@@ -69,15 +63,6 @@ public class TileGrid : MonoBehaviour
             return;
         }
 
-        if (this.TileReference == null)
-        {
-            this.TileReference = this.transform.Find("Tile")?.gameObject;
-            if (this.TileReference == null)
-            {
-                throw new MissingComponentException("Could not locate Tile Reference.");
-            }
-        }
-
         if (this.TileContainer == null)
         {
             this.TileContainer = this.transform.Find("Container")?.gameObject.transform;
@@ -86,9 +71,6 @@ public class TileGrid : MonoBehaviour
                 throw new MissingComponentException("Could not locate Tile Container.");
             }
         }
-
-        
-
         this.GenerateGrid();
 
         this.isDirty = false;
@@ -96,6 +78,7 @@ public class TileGrid : MonoBehaviour
 
     public void GenerateGrid()
     {
+        this.TileContainer = this.transform.Find("Container")?.gameObject.transform;
         List<Transform> children = this.TileContainer.Cast<Transform>().ToList();
         foreach(Transform child in children)
         {
@@ -108,10 +91,13 @@ public class TileGrid : MonoBehaviour
         {
             for (int col = 0; col < this.columns; col++)
             {
-                GameObject newTile = UnityEngine.Object.Instantiate(this.TileReference);
+                GameObject newTile = new GameObject();
                 newTile.name = $"(row: {row}, col: {col})";
                 newTile.transform.parent = this.TileContainer;
+                newTile.AddComponent<Tile>().Build();
                 newTile.transform.position = new Vector3(row + offsetX, 0, col + offsetZ);
+                
+
             }
         }
     }

@@ -17,6 +17,7 @@ public class TileGridEditor : Editor
         GUILayout.Space(20);
         if (GUILayout.Button("Rebuild Tile Grid"))
         {
+            tileGrid.CleanUp();
             tileGrid.GenerateGrid();
         }
 
@@ -24,11 +25,6 @@ public class TileGridEditor : Editor
         //EditorGUILayout.HelpBox("The rows and columns must be >0.", MessageType.Info);
         
         tileGrid.CleanUp();
-
-        if (tileGrid.TileReference == null)
-        {
-            EditorGUILayout.HelpBox("Missing a Tile Reference!", MessageType.Error);
-        }
 
         if (tileGrid.TileContainer == null)
         {

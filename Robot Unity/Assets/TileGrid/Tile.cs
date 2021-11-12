@@ -77,6 +77,7 @@ public class Tile : MonoBehaviour
         GameObject floorTile = UnityEngine.Object.Instantiate<GameObject>(prefab);
         floorTile.name = name;
         floorTile.transform.parent = this.transform;
+        floorTile.transform.localPosition = new Vector3();
     }
 }
 
