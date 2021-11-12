@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 public class TileGrid : MonoBehaviour
 {
-    
+
+    public int rows;
+    public int columns;
+
 }
