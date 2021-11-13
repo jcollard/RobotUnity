@@ -10,6 +10,8 @@ public class TileGrid : MonoBehaviour
 
     private TextAsset mapFile;
     private TileFactory factory;
+
+    [NonSerialized]
     private bool IsDirty = true;
     private GameObject[,] grid;
     public bool IsLoaded
