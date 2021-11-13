@@ -10,16 +10,11 @@ public class TileGrid : MonoBehaviour
 
     private TextAsset mapFile;
     private TileFactory factory;
-    private bool _IsDirty = true;
-    private bool IsDirty
-    {
-        get => ErrorMessage != null || _IsDirty;
-        set => _IsDirty = value;
-    }
+    private bool IsDirty = true;
     private GameObject[,] grid;
     public bool IsLoaded
     {
-        get => this.IsDirty == false && this.grid != null;
+        get => this.IsDirty == false && this.grid != null && this.ErrorMessage == null;
     }
     public string ErrorMessage { get; private set; }
 
@@ -94,9 +89,13 @@ public class TileGrid : MonoBehaviour
                 {
                     newTile = TileGrid.GetDefaultTile();
                 }
-                else if (!this.factory.IsValidTile(c))
+                else if (this.factory.IsValidTile(c))
                 {
                     newTile = this.factory.GetTile(c);
+                    if (newTile == null)
+                    {
+                        throw new InvalidTileCharacterException($"Attempted to load Tile for {c} but resulted in a null GameObject.");
+                    }
                 }
                 else
                 {
@@ -135,7 +134,7 @@ public class TileGridEditor : Editor
         TileGrid tileGrid = (TileGrid)target;
 
         tileGrid.MapFile = (TextAsset)EditorGUILayout.ObjectField("Map File", tileGrid.MapFile, typeof(TextAsset), false);
-        EditorGUILayout.ObjectField("Tile Factory", tileGrid.Factory, typeof(MapFileParser), true);
+        tileGrid.Factory = (TileFactory)EditorGUILayout.ObjectField("Tile Factory", tileGrid.Factory, typeof(TileFactory), true);
 
         GUILayout.Space(20);
         if (tileGrid.IsLoaded)
@@ -168,12 +167,16 @@ public class TileGridEditor : Editor
 
 public class TileFactory : MonoBehaviour
 {
+    public void Start()
+    {
+        this.gameObject.SetActive(false);
+    }
     public virtual GameObject GetTile(char ch)
     {
         throw new NotImplementedException("Method not Implemented");
     }
 
-    public bool IsValidTile(char ch)
+    public virtual bool IsValidTile(char ch)
     {
         throw new NotImplementedException("Method not Implemented");
     }
