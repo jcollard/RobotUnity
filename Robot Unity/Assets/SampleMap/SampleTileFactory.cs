@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 public class SampleTileFactory : TileFactory
 {
     public GameObject FloorTile;
@@ -6,36 +7,34 @@ public class SampleTileFactory : TileFactory
     public GameObject ExitTile;
     public GameObject WallTile;
 
-    public override GameObject GetTile(char ch)
+    public override List<GameObject> GetTile(char ch)
     {
-        if (ch == '.')
-        {
-            return UnityEngine.Object.Instantiate(this.FloorTile);
-        }
+        List<GameObject> objects = new List<GameObject>();
+        objects.Add(UnityEngine.Object.Instantiate(this.FloorTile));
 
         if (ch == '>')
         {
-            return UnityEngine.Object.Instantiate(this.RobotTile);
+            objects.Add(UnityEngine.Object.Instantiate(this.RobotTile));
         }
 
         if (ch == 'v')
         {
             GameObject clone = UnityEngine.Object.Instantiate(this.RobotTile);
             clone.transform.Rotate(0, 90, 0);
-            return clone;
+            objects.Add(clone);
         }
 
         if (ch == 'X')
         {
-            return UnityEngine.Object.Instantiate(this.ExitTile);
+            objects.Add(UnityEngine.Object.Instantiate(this.ExitTile));
         }
 
         if (ch == '#')
         {
-            return UnityEngine.Object.Instantiate(this.WallTile);
+            objects.Add(UnityEngine.Object.Instantiate(this.WallTile));
         }
 
-        throw new InvalidTileCharacterException($"Could not create Tile with character '{ch}'.");
+        return objects;
     }
 
     public override bool IsValidTile(char ch)

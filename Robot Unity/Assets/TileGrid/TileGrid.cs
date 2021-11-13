@@ -17,17 +17,14 @@ public class TileGrid : MonoBehaviour
 
     [NonSerialized]
     private bool IsDirty = true;
-
-    [SerializeField]
-    private GameObject[,] grid;
     public bool IsLoaded
     {
-        get => this.IsDirty == false && this.grid != null && this.ErrorMessage == null;
+        get => this.IsDirty == false && this.ErrorMessage == null;
     }
     public string ErrorMessage { get; private set; }
 
-    public int Rows { get => this.grid != null ? this.grid.GetLength(0) : -1; }
-    public int Columns { get => this.grid != null ? this.grid.GetLength(1) : -1; }
+    public int Rows { get; private set; }
+    public int Columns { get; private set; }
 
     public TextAsset MapFile
     {
@@ -82,36 +79,39 @@ public class TileGrid : MonoBehaviour
     {
         UnityUtils.DestroyImmediateChildren(this.transform);
         List<String> lines = Utils.GetStringIterable(mapFile.text).ToList();
-        this.grid = null;
         try
         {
             char[,] grid = MapFileParser.Instance.Parse(lines);
-            this.grid = new GameObject[grid.GetLength(0), grid.GetLength(1)];
+            this.Rows = grid.GetLength(0);
+            this.Columns = grid.GetLength(1);
             float offsetX = -((float)(this.Rows - 1)) * 0.5f;
             float offsetZ = -((float)(this.Columns - 1)) * 0.5f;
 
             foreach ((int row, int col, char c) in Utils.Get2DEnumerable(grid))
             {
-                GameObject newTile;
+                List<GameObject> newTile;
                 if (this.factory == null)
                 {
-                    newTile = TileGrid.GetDefaultTile();
+                    newTile = new List<GameObject>();
+                    newTile.Add(TileGrid.GetDefaultTile());
                 }
                 else if (this.factory.IsValidTile(c))
                 {
                     newTile = this.factory.GetTile(c);
                     if (newTile == null)
                     {
-                        throw new InvalidTileCharacterException($"Attempted to load Tile for {c} but resulted in a null GameObject.");
+                        throw new InvalidTileCharacterException($"Attempted to load Tile for {c} but resulted in a null List<GameObject>.");
                     }
                 }
                 else
                 {
                     throw new InvalidTileCharacterException($"An invalid tile character {c} was found at {row}x{col}.");
                 }
-                newTile.transform.parent = this.transform;
-                newTile.transform.localPosition = new Vector3(row + offsetX, 0, col + offsetZ);
-                this.grid[row, col] = newTile;
+                foreach(GameObject newObject in newTile)
+                {
+                    newObject.transform.parent = this.transform;
+                    newObject.transform.localPosition = new Vector3(row + offsetX, 0, col + offsetZ);
+                }
             }
 
             this.ErrorMessage = null;
@@ -188,7 +188,8 @@ public class TileFactory : MonoBehaviour
     {
         this.gameObject.SetActive(false);
     }
-    public virtual GameObject GetTile(char ch)
+
+    public virtual List<GameObject> GetTile(char ch)
     {
         throw new NotImplementedException("Method not Implemented");
     }
