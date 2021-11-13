@@ -9,6 +9,7 @@ namespace Collard
     public class UnityUtils
     {
         private static readonly Dictionary<Color, GUIStyle> ColorLabels = new Dictionary<Color, GUIStyle>();
+        private static GUIStyle _MonoSpacedTextArea;
 
         public static GUIStyle GetColorLabel(Color color)
         {
@@ -19,6 +20,28 @@ namespace Collard
             }
 
             return style;
+        }
+
+        public static GUIStyle MonoSpacedTextArea
+        {
+            get
+            {
+                if (_MonoSpacedTextArea == null)
+                {
+                    _MonoSpacedTextArea = new GUIStyle(EditorStyles.textArea);
+                    Font f = Resources.Load<Font>("Fonts/MonoSpaced");
+                    if (f == null)
+                    {
+                        Debug.LogWarning("Attempted to load font from 'Resources/Fonts/MonoSpaced' but no file was found. Defaulting to system font.");
+                    }
+                    else
+                    {
+                        _MonoSpacedTextArea.font = f;
+                        _MonoSpacedTextArea.fontSize = 18;
+                    }
+                }
+                return _MonoSpacedTextArea;
+            }
         }
 
         public static void DestroyImmediateChildren(Transform t)

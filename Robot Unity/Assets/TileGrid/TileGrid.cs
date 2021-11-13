@@ -150,7 +150,6 @@ public class TileGridEditor : Editor
         {
 
             EditorGUILayout.LabelField("Tile Grid Loaded", UnityUtils.GetColorLabel(Color.green));
-            EditorGUILayout.LabelField($"Dimensions: {tileGrid.Rows}x{tileGrid.Columns}");
         }
         else
         {
@@ -162,6 +161,8 @@ public class TileGridEditor : Editor
             GUILayout.Space(20);
             EditorGUILayout.HelpBox(tileGrid.ErrorMessage, MessageType.Error);
         }
+
+        EditorGUILayout.TextArea(tileGrid.MapFile.text, UnityUtils.MonoSpacedTextArea);
 
 
         GUILayout.Space(20);
