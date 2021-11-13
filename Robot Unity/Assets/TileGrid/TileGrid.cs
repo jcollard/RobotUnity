@@ -4,15 +4,21 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using Collard;
+using UnityEditor.SceneManagement;
 
 public class TileGrid : MonoBehaviour
 {
 
+    [SerializeField]
     private TextAsset mapFile;
+
+    [SerializeField]
     private TileFactory factory;
 
     [NonSerialized]
     private bool IsDirty = true;
+
+    [SerializeField]
     private GameObject[,] grid;
     public bool IsLoaded
     {
@@ -133,8 +139,9 @@ public class TileGridEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        TileGrid tileGrid = (TileGrid)target;
+        EditorGUI.BeginChangeCheck();
 
+        TileGrid tileGrid = (TileGrid)target;
         tileGrid.MapFile = (TextAsset)EditorGUILayout.ObjectField("Map File", tileGrid.MapFile, typeof(TextAsset), false);
         tileGrid.Factory = (TileFactory)EditorGUILayout.ObjectField("Tile Factory", tileGrid.Factory, typeof(TileFactory), true);
 
@@ -164,6 +171,13 @@ public class TileGridEditor : Editor
         }
 
         tileGrid.CleanUp();
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            // This code will unsave the current scene if there's any change in the editor GUI.
+            // Hence user would forcefully need to save the scene before changing scene
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        }
     }
 }
 
