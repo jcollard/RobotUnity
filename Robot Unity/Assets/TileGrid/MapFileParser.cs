@@ -14,12 +14,12 @@ public class MapFileParser
         string[] split = line.Trim().ToLower().Split('x');
         if (split.Length != 2)
         {
-            throw new InvalidTileGridFileException($"The first line of a TileGrid file should contain the format \"{{rows}}x{{columns}}\" but was {line}.");
+            throw new InvalidTileGridFileException($"The first line of a TileGrid file should contain the format \"{{rows}}x{{columns}}\" but was \"{line}\".");
         }
 
         if (!Int32.TryParse(split[0], out int rows) || !Int32.TryParse(split[1], out int columns))
         {
-            throw new InvalidTileGridFileException($"The first line of a TileGrid file should contain the format \"{{rows}}x{{columns}}\" but was {line}.");
+            throw new InvalidTileGridFileException($"The first line of a TileGrid file should contain the format \"{{rows}}x{{columns}}\" but was \"{line}\".");
         }
 
         return (rows, columns);
