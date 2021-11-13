@@ -18,6 +18,13 @@ public class SampleTileFactory : TileFactory
             return UnityEngine.Object.Instantiate(this.RobotTile);
         }
 
+        if (ch == 'v')
+        {
+            GameObject clone = UnityEngine.Object.Instantiate(this.RobotTile);
+            clone.transform.Rotate(0, 90, 0);
+            return clone;
+        }
+
         if (ch == 'X')
         {
             return UnityEngine.Object.Instantiate(this.ExitTile);
@@ -33,6 +40,6 @@ public class SampleTileFactory : TileFactory
 
     public override bool IsValidTile(char ch)
     {
-        return ".>X#".Contains($"{ch}");
+        return ".>vX#".Contains($"{ch}");
     }
 }
