@@ -10,6 +10,18 @@ public class Tile : MonoBehaviour
     private static readonly Dictionary<TileType, string> tileResourceLookup;
     private static readonly Dictionary<TileType, (string, GameObject)> tilePrefabLookup;
 
+    public TileGrid Parent {
+        get 
+        {
+            TileGrid parent = this.gameObject.GetComponentInParent<TileGrid>();
+            if (parent == null)
+            {
+                throw new NullReferenceException("Tile must be within a parent TileGrid.");
+            }
+            return parent;
+        }
+    }
+
     private static (string, GameObject) GetPrefab(TileType tileType)
     {
         if (!tilePrefabLookup.ContainsKey(tileType))

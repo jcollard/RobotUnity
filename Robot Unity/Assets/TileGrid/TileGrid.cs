@@ -19,7 +19,7 @@ public class TileGrid : MonoBehaviour
             Transform container = this.transform.Find("Container")?.gameObject.transform;
             if (container == null)
             {
-                GameObject containerObject = new GameObject();
+                GameObject containerObject = new GameObject("Container");
                 containerObject.transform.parent = this.transform;
                 containerObject.transform.localPosition = new Vector3();
                 container = containerObject.transform;
