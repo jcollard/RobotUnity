@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using RobotController;
+
 public class SampleTileFactory : TileFactory
 {
     public GameObject FloorTile;
